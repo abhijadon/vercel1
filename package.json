@@ -1,0 +1,25 @@
+{
+  "name": "backend",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "body-parser": "^1.20.2",
+    "cors": "^2.8.5",
+    "express": "^4.18.2",
+    "express-validator": "^7.0.1",
+    "google-auth-library": "^8.9.0",
+    "google-spreadsheet": "^4.0.2",
+    "googleapis": "^123.0.0",
+    "mongoose": "^6.10.0",
+    "mysql": "^2.18.1",
+    "mysql-schema": "^1.0.0",
+    "nodemon": "^3.0.1",
+    "payumoney-node": "^2.0.1"
+  }
+}
