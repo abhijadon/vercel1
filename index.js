@@ -9,12 +9,10 @@ app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(cors({ origin: "http://localhost:3000" }));
 
-app.get("/", function (req, res) {
-  
-});
+app.get("/", function (req, res) {});
 
 //Api routes are available
-app.use("/api", require("./routes/sheet"));
+app.use("/", require("./routes/sheet"));
 app.use("/", require("./routes/form"));
 
 //connect to localhost

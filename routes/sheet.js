@@ -1,5 +1,6 @@
 const express = require("express");
 const router = express.Router();
+const con = require("../middleware/mysql");
 const { google } = require("googleapis");
 
 // Create a google sheet Rest api
@@ -90,11 +91,6 @@ router.post("/sheet", async (req, res) => {
     console.log(error.message);
     res.status(500).send("Internal Server Error");
   }
-});
-
-// Create a mysql database with restapi
-router.post("/form", (req, res) => {
-  
 });
 
 module.exports = router;
