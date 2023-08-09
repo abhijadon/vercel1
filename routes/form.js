@@ -1,19 +1,25 @@
 const express = require("express");
-const Post = require("../models/Form"); // new
+const con = require("../middleware/mysql");
 const router = express.Router();
 
-// Get all posts
-// router.post("/posts", async (req, res) => {
-//   const post = new Post({
-//     title: req.body.title,
-//     content: req.body.content,
-//   });
-//   await post.save();
-//   res.send(post);
-// });
+router.post("/form", function (req, res) {
+  const name = req.body.name;
+  const email = req.body.email;
+  const mobile = req.body.mobile;
 
-router.get("/posts", async (req, res) => {
-  res.send("Hello world");
+  const sql =
+    "INSERT INTO userform(name, email, mobile) VALUES('" +
+    name +
+    "', '" +
+    email +
+    "', '" +
+    mobile +
+    "')";
+
+  con.query(sql, function (error, result) {
+    if (error) throw error;
+    res.send("Form data added successfully" + result.insertID);
+  });
 });
-module.exports = router;
 
+module.exports = router;
