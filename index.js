@@ -21,7 +21,7 @@ app.use(express.static("public"));
 app.set("views", __dirname + "/public");
 app.engine("html", require("ejs").renderFile);
 
-app.get("/about", function (req, res) {
+app.get("/about/index.html", function (req, res) {
   res.render("dataFrom.html");
 });
 
