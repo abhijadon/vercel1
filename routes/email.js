@@ -42,20 +42,40 @@ router.post("/email", (req, res) => {
 <head>
   <meta charset="UTF-8">
   <title>SODE - Student service</title>
+  <style>
+*{
+  font-family: Arial, Helvetica, sans-serif;
+  border-collapse: collapse;
+  width: 100%;
+}
+
+ td, tr{
+  border: 1px solid #ddd;
+  padding: 8px;
+  width: 50%;
   
+}
+
+tr:hover {background-color: #ddd;}
+
+tr {
+  padding-top: 12px;
+  padding-bottom: 12px;
+  text-align: left;
+  color: black;
+}
+</style>
 </head>
 <body style="font-family: 'Lato', sans-serif;">
-  <div style="border: 1px solid black; background-color: #eeeeee;"">
-    <div
-      style="text-align: center;>
-      <h1 style="color: blue; font-size: 200%;">
+  <div style="border: 1px solid black;" >
+  <div style="text-align: center; background-color: blue; height: 30px; border-bottom: 1px solid black;">
+     <h1 style="color: #ffffff; font-size: 150%; margin-top: 0;">
         Student services
       </h1>
     </div>
-    <div>
-      <div style="">
+    
         <div>
-          <table style="border: 1px solid black; width: 100%;">
+          <table>
             <tbody>
             <tr>
             <td>
@@ -211,9 +231,6 @@ router.post("/email", (req, res) => {
           </tr>
             </tbody>
 </table>
- 
-        </div>
-      </div>
     </div>
   </div>
 </body>
