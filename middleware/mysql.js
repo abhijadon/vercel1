@@ -2,10 +2,10 @@ const mysql = require("mysql");
 
 const con = mysql.createConnection({
   connectTimeout: 6000,
-  host: "localhost",
-  user: "root",
-  password: "",
-  database: "_newstd",
+  host: process.env.HOST,
+  user: process.env.USER,
+  password: process.env.PASSWORD,
+  database: process.env.DATABASE,
 });
 
 module.exports = con;
