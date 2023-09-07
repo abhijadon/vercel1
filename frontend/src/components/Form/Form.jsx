@@ -91,21 +91,21 @@ const Form = () => {
     setIsSubmit(true);
 
     await Promise.all([
-      fetch("http://localhost:5000/form", {
+      fetch(`${process.env.REACT_APP_PORT}/form`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
         },
         body: JSON.stringify(data),
       }),
-      fetch("http://localhost:5000/sheet", {
+      fetch(`${process.env.REACT_APP_PORT}/sheet`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
         },
         body: JSON.stringify(data),
       }),
-      fetch("http://localhost:5000/api/email", {
+      fetch(`${process.env.REACT_APP_PORT}/email`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -370,6 +370,7 @@ const Form = () => {
               </label>
               <PhoneInput
                 className="appearance-none block  text-gray-700 border border-gray-400 rounded py-1.5 px-3 "
+                defaultCountry="IN"
                 international
                 value={mobile}
                 onChange={setMobile}
@@ -405,6 +406,7 @@ const Form = () => {
                 Alternate Number
               </label>
               <PhoneInput
+                defaultCountry="IN"
                 className="appearance-none block  text-gray-700 border border-gray-400 rounded py-1.5 px-3 leading-tight focus:outline-none focus:bg-white focus:border-gray-500"
                 international
                 value={alternate}
