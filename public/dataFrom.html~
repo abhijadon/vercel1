@@ -35,13 +35,13 @@
 			<tr>
 				<td>Redirect URL</td>
 				<td><input type="text" name="redirect_url"
-					value="http://127.0.0.1:3000/ccavResponseHandler" />
+					value="http://192.168.3.129:3000/ccavResponseHandler" />
 				</td>
 			</tr>
 			<tr>
 				<td>Cancel URL</td>
 				<td><input type="text" name="cancel_url"
-					value="http://127.0.0.1:3000/ccavResponseHandler" />
+					value="http://192.168.3.129:3000/ccavResponseHandler" />
 				</td>
 			</tr>
 			<tr>
@@ -148,12 +148,6 @@
 				<td>Merchant Param5</td>
 				<td><input type="text" name="merchant_param5"
 					value="additional Info." /></td>
-			</tr>
-			<tr>
-				<td>Integration Type:</td>
-				<td><select name="integration_type">
-						<option value="iframe_normal">iframe_normal</option>
-				</select></td>
 			</tr>
 			<tr>
 				<td>Promo Code:</td>

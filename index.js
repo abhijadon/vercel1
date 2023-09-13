@@ -1,5 +1,4 @@
 const express = require("express");
-const con = require("./middleware/mysql");
 const cors = require("cors");
 const fs = require("fs");
 const bodyParser = require("body-parser");
@@ -8,7 +7,6 @@ port = process.env.PORT || 5000;
 const app = express();
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
-app.use(cors({ origin: "http://localhost:3000" }));
 dotenv.config();
 const http = require("http");
 qs = require("querystring");
@@ -31,12 +29,7 @@ app.post("/ccavResponseHandler", function (request, response) {
   ccavResHandler.postRes(request, response);
 });
 
-//Api routes are available
-app.use("/api", require("./routes/email"));
-app.use("/api", require("./routes/sheet"));
-app.use("/api", require("./routes/form"));
-
 //connect to localhost
 app.listen(port, () => {
   process.env.PORT;
-});
+}); 
