@@ -15,7 +15,7 @@ router.post("/ccavenue", (req, res) => {
   const data = `${merchantId}|${orderId}|${amount}|${returnUrl}|${accessCode}`;
   const encryptedData = crypto.createHash("sha256").update(data).digest("hex");
 
-  const redirectUrl = `https://test.ccavenue.com/transaction/transaction.do?command=initiateTransaction&merchant_id=${merchantId}&order_id=${orderId}&amount=${amount}&redirect_url=${returnUrl}&encRequest=${encryptedData}&access_code=${accessCode}`;
+  const redirectUrl = `https://secure.ccavenue.com/transaction/transaction.do?command=initiateTransaction&merchant_id=${merchantId}&order_id=${orderId}&amount=${amount}&redirect_url=${returnUrl}&encRequest=${encryptedData}&access_code=${accessCode}`;
 
   res.redirect(redirectUrl);
 });
