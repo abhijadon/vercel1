@@ -21,13 +21,7 @@ app.get("/", function (req, res) {
   res.render("dataFrom.html");
 });
 
-app.post("/ccavRequestHandler", function (request, response) {
-  ccavReqHandler.postReq(request, response);
-});
-
-app.post("/ccavResponseHandler", function (request, response) {
-  ccavResHandler.postRes(request, response);
-});
+app.use("/api", ccavResHandler);
 
 //connect to localhost
 app.listen(port, () => {

@@ -1,42 +1,97 @@
-var http = require("http"),
-  fs = require("fs"),
-  ccav = require("./ccavutil.js"),
-  qs = require("querystring");
+const express = require("express");
+const bodyParser = require("body-parser");
+const router = express.Router();
+const app = express();
 
-exports.postReq = function (request, response) {
-  const { name, amount } = request.body;
-  var workingKey = "9223AAA9021800C10C706B47E6B0D7C3", //Put in the 32-Bit key shared by CCAvenues.
-    accessCode = "AVXS76JC64CK33SXKC"; //Put in the Access Code shared by CCAvenues.
+// Parse JSON and URL-encoded bodies
+app.use(bodyParser.json());
+app.use(bodyParser.urlencoded({ extended: true }));
 
-  if (request.method === "POST") {
-    var body = [
-      {
-        name,
-        amount,
-      },
-    ];
+// Define your CCAvenue credentials
+const merchantId = "878809";
+const accessCode = "AVXS76JC64CK33SXKC";
+const workingKey = "9223AAA9021800C10C706B47E6B0D7C3";
+const redirectUrl = "http://localhost:5000/ccavenue/response"; // Replace with your actual website URL
 
-    request.on("data", function (data) {
-      body += data;
-    });
+// Define a route to initiate the payment request
+router.post("/ccavenue", (req, res) => {
+  // Generate a unique order ID
+  const orderId = "ORDER" + Date.now();
 
-    request.on("end", function () {
-      if (body) {
-        var encRequest = ccav.encrypt(body, workingKey);
-        var formbody =
-          '<form id="nonseamless" method="post" name="redirect" action="https://secure.ccavenue.com/transaction/transaction.do?command=initiateTransaction"/> <input type="hidden" id="encRequest" name="encRequest" value="' +
-          encRequest +
-          '"><input type="hidden" name="access_code" id="access_code" value="' +
-          accessCode +
-          '"><input type="submit" value="Submit"></form>';
+  // Extract order details from the request
+  const amount = req.body.amount; // The payment amount
+  const currency = "INR"; // Change as needed
 
-        response.setHeader("Content-Type", "text/html");
-        response.end(formbody);
-      } else {
-        response.status(400).end("Bad Request");
-      }
-    });
+  // Create a checksum hash
+  const checksum = calculateChecksum(
+    merchantId,
+    orderId,
+    amount,
+    redirectUrl,
+    workingKey
+  );
+
+  // Redirect to the CCAvenue payment page
+  const redirectParams = {
+    merchant_id: merchantId,
+    order_id: orderId,
+    amount,
+    currency,
+    redirect_url: redirectUrl,
+    billing_name: req.body.billing_name,
+    billing_address: req.body.billing_address,
+    billing_city: req.body.billing_city,
+    billing_state: req.body.billing_state,
+    billing_zip: req.body.billing_zip,
+    billing_country: req.body.billing_country,
+    billing_tel: req.body.billing_tel,
+    billing_email: req.body.billing_email,
+    merchant_param1: "", // Add any additional parameters as needed
+    checksum,
+  };
+
+  const ccAvenueUrl = "https://secure.ccavenue.com/transaction/transaction.do";
+  const redirectQueryString = Object.entries(redirectParams)
+    .map(([key, value]) => `${key}=${encodeURIComponent(value)}`)
+    .join("&");
+
+  res.redirect(`${ccAvenueUrl}?${redirectQueryString}`);
+});
+
+// Define a route to handle the response from CCAvenue
+router.post("/response", (req, res) => {
+  // Verify the checksum
+  const isValidChecksum = verifyChecksum(req.body, workingKey);
+
+  if (isValidChecksum) {
+    // Payment is successful
+    // You can update your database or perform other actions here
+
+    res.send("Payment Successful");
   } else {
-    response.status(405).end("Method Not Allowed");
+    // Payment failed
+    res.send("Payment Failed");
   }
-};
+});
+
+// Function to calculate the checksum
+function calculateChecksum(...params) {
+  const data = params.join("|");
+  const crypto = require("crypto");
+  const hmac = crypto.createHmac("sha256", workingKey);
+  hmac.update(data);
+  return hmac.digest("hex");
+}
+
+// Function to verify the checksum
+function verifyChecksum(body, workingKey) {
+  const receivedChecksum = body.encResp;
+  delete body.encResp;
+  const calculatedChecksum = calculateChecksum(
+    ...Object.values(body),
+    workingKey
+  );
+  return receivedChecksum === calculatedChecksum;
+}
+
+module.exports = router;
