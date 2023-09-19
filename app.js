@@ -1,49 +1,45 @@
 const express = require("express");
-const bodyParser = require("body-parser");
-const request = require("request");
-const crypto = require("crypto");
+const ccavenue = require("ccavenue"); // Assuming you have a ccavenue package installed
+const router = express.Router();
 
-const app = express();
-const port = 3000; // Change this to your desired port
+// Set up CCAvenue parameters
+ccavenue.setMerchant("878809");
+ccavenue.setWorkingKey("9223AAA9021800C10C706B47E6B0D7C3");
+ccavenue.setOrderId("123456");
+ccavenue.setRedirectUrl("YourRedirectUrl");
+ccavenue.setOrderAmount("YourOrderAmount");
 
-// CCAvenue merchant credentials
-const merchantId = "878809";
-const accessCode = "AVXS76JC64CK33SXKC";
-const workingKey = "9223AAA9021800C10C706B47E6B0D7C3";
+// Optionally, you can set customer information
+const customerInfo = {
+  billing_cust_address: "Bangalore",
+  billing_cust_name: "Nitish Kumar",
+};
+ccavenue.setOtherParams(customerInfo);
 
-app.use(bodyParser.urlencoded({ extended: true }));
+// Define a route for handling the redirect URL from CCAvenue
+router.post("/url", (req, res) => {
+  // Get the response data from CCAvenue
+  const responseData = ccavenue.paymentRedirect(req);
 
-// Define a route for the payment form
-app.get("/payment", (req, res) => {
-  res.sendFile(__dirname + "/dataFrom.html"); // Create a simple HTML form for payment
+  // Check if the response is valid
+  if (responseData.isCheckSumValid === true) {
+    if (responseData.AuthDesc === "Y") {
+      // Payment was successful, handle your success logic here
+      res.send("Payment Successful");
+    } else if (responseData.AuthDesc === "N") {
+      // Payment was unsuccessful, handle your failure logic here
+      res.send("Payment Unsuccessful");
+    } else if (responseData.AuthDesc === "B") {
+      // Batch processing mode, handle your logic here
+      res.send("Batch Processing");
+    } else {
+      // Handle other cases as needed
+      res.send("Illegal Access");
+    }
+  } else {
+    // Handle cases where the checksum is not valid
+    res.send("Checksum Validation Failed");
+  }
 });
 
-// Handle the form submission
-app.post("/payment", (req, res) => {
-  const orderId = Date.now(); // Generate a unique order ID
-  const amount = req.body.amount;
-
-  // Calculate checksum
-  const data = `${merchantId}|${orderId}|${amount}|YourOptionalDescription|YourOptionalEmail|YourOptionalMobile|YourCustomerName|YourReturnURL|1|test@test.com||||||${workingKey}`;
-  const encryptedData = crypto.createHash("sha512").update(data).digest("hex");
-
-  // Redirect to CCAvenue's payment gateway
-  const redirectUrl = `https://secure.ccavenue.com/transaction/transaction.do?command=initiateTransaction&merchant_id=${merchantId}&order_id=${orderId}&amount=${amount}&currency=INR&redirect_url=YOUR_RETURN_URL&cancel_url=YOUR_CANCEL_URL&language=EN&billing_name=YourCustomerName&billing_address=YourAddress&billing_city=YourCity&billing_state=YourState&billing_zip=YourZip&billing_country=India&billing_tel=YourPhoneNumber&billing_email=YourEmail&merchant_param1=custom_param1&merchant_param2=custom_param2&checksum=${encryptedData}`;
-
-  res.redirect(redirectUrl);
-});
-
-// Define a callback URL to handle the response from CCAvenue
-app.post("/ccavenue_callback", (req, res) => {
-  // Verify the response checksum here and process the payment status
-  const receivedChecksum = req.body.checksum;
-  const orderId = req.body.order_id;
-  // You'll need to implement checksum verification and payment status processing here
-
-  // Send a response back to CCAvenue to confirm receipt
-  res.send("Success");
-});
-
-app.listen(port, () => {
-  console.log(`Server is running on port ${port}`);
-});
+module.exports = router;
